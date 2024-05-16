@@ -48,4 +48,9 @@ This project implements a REST API server with CRUD functionalities using Node.j
 Ensure that MongoDB is installed and running. The default configuration connects to a MongoDB instance running locally at `mongodb://localhost:27017/mydatabase`.
 
 ## Testing the API
+```bash
+
+https://credence-analytics-assignment-backend.onrender.com/books
+https://credence-analytics-assignment-backend.onrender.com/books/664642a08705da265ee389fa
+`````
 

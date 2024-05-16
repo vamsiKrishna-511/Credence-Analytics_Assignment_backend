@@ -28,7 +28,7 @@ app.post('/books', async (req, res) => {
 });
 
 // Get all books
-app.get('/books', async (req, res) => {
+app.get('/', async (req, res) => {
   try {
     const books = await Book.find();
     res.status(200).json(books);

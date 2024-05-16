@@ -1,0 +1,19 @@
+{
+  "name": "credence-analytics",
+  "version": "1.0.0",
+  "description": "Credence Analytics Assigment",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "run dev"
+  },
+  "author": "shivakumar gattu",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.5",
+    "nodemon": "^3.1.0"
+  }
+}

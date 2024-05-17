@@ -1,87 +1,86 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const Book = require("./models/book");
-const cors = require("cors");
+const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
+const port = 3001;
 
-app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-mongoose.connect("mongodb+srv://gshiva0018:gshiva0018@cluster0.rnm60yk.mongodb.net/CredenceCURD?retryWrites=true&w=majority&appName=Cluster0")
-  .then(res => console.log("db is Connect"))
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost:27017/movies')
+.then(() => console.log('MongoDB connected...'))
   .catch(err => console.log(err));
 
-app.post('/books', async (req, res) => {
-  try {
-    const newBook = new Book({
-      name: req.body.name,
-      image: req.body.image, // Expecting image URL
-      summary: req.body.summary
-    });
-    const book = await newBook.save();
-    res.status(201).json(book);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+// Define a schema and model for the movies
+const movieSchema = new mongoose.Schema({
+    name: String,
+    img: String,
+    summary: String
 });
 
-// Get all books
-app.get('/', async (req, res) => {
-  try {
-    const books = await Book.find();
-    res.status(200).json(books);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+const Movie = mongoose.model('Movie', movieSchema);
 
-// Get a book by ID
-app.get('/books/:id', async (req, res) => {
-  try {
-    const book = await Book.findById(req.params.id);
-    if (book) {
-      res.status(200).json(book);
-    } else {
-      res.status(404).json({ message: 'Book not found' });
+// Create
+app.post('/movies', async (req, res) => {
+    try {
+        const movie = new Movie(req.body);
+        await movie.save();clear
+        res.status(201).send(movie);
+    } catch (error) {
+        res.status(400).send(error);
     }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 });
 
-// Update a book
-app.put('/books/:id', async (req, res) => {
-  try {
-    const book = await Book.findById(req.params.id);
-    if (book) {
-      book.name = req.body.name;
-      book.image = req.body.image; // Expecting image URL
-      book.summary = req.body.summary;
-      const updatedBook = await book.save();
-      res.status(200).json(updatedBook);
-    } else {
-      res.status(404).json({ message: 'Book not found' });
+// Read all
+app.get('/movies', async (req, res) => {
+    try {
+        const movies = await Movie.find();
+        res.send(movies);
+    } catch (error) {
+        res.status(500).send(error);
     }
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
 });
 
-// Delete a book
-app.delete('/books/:id', async (req, res) => {
-  try {
-    const book = await Book.findById(req.params.id);
-    if (book) {
-      await Book.deleteOne({ _id: req.params.id });
-      res.status(200).json({ message: 'Book deleted' });
-    } else {
-      res.status(404).json({ message: 'Book not found' });
+// Read one
+app.get('/movies/:id', async (req, res) => {
+    try {
+        const movie = await Movie.findById(req.params.id);
+        if (!movie) {
+            return res.status(404).send();
+        }
+        res.send(movie);
+    } catch (error) {
+        res.status(500).send(error);
     }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 });
 
-app.listen(5000, (req, res) => console.log("server listening"));
+// Update
+app.put('/movies/:id', async (req, res) => {
+    try {
+        const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!movie) {
+            return res.status(404).send();
+        }
+        res.send(movie);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+// Delete
+app.delete('/movies/:id', async (req, res) => {
+    try {
+        const movie = await Movie.findByIdAndDelete(req.params.id);
+        if (!movie) {
+            return res.status(404).send();
+        }
+        res.send(movie);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
